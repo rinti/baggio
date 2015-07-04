@@ -1,7 +1,8 @@
 package main
 
 import (
-  // "fmt"
+  "strings"
+  "path/filepath"
   "io/ioutil"
   "github.com/russross/blackfriday"
   "github.com/flosch/pongo2"
@@ -17,6 +18,11 @@ func main() {
   files, _ := ioutil.ReadDir("./blog/")
 
   for _, filename := range files {
+    // Ignore drafts
+    if strings.HasPrefix(filename.Name(), "draft") {
+      continue
+    }
+
     filecontent, err := ioutil.ReadFile("./blog/" + filename.Name())
     check(err)
 
@@ -26,7 +32,8 @@ func main() {
     f, err := tpl.Execute(pongo2.Context{})
     check(err)
 
-    ioutil.WriteFile(filename.Name(), []byte(f), 0644)
+    finalfilename := strings.TrimSuffix(filename.Name(), filepath.Ext(filename.Name()))
+    ioutil.WriteFile(finalfilename + ".html", []byte(f), 0644)
   }
 
 }
