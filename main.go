@@ -28,6 +28,7 @@ func main() {
     check(err)
     if !public_html {
       os.Mkdir("./public_html/", 0755)
+      os.Mkdir("./public_html/blog/", 0755)
     }
 
     for _, filename := range files {
@@ -46,6 +47,6 @@ func main() {
         check(err)
 
         finalfilename := strings.TrimSuffix(filename.Name(), filepath.Ext(filename.Name()))
-        ioutil.WriteFile(finalfilename + ".html", []byte(f), 0644)
+        ioutil.WriteFile("./public_html/blog/" + finalfilename + ".html", []byte(f), 0644)
     }
 }
