@@ -5,6 +5,7 @@ import (
     "path/filepath"
     "io/ioutil"
     "os"
+    "regexp"
     "github.com/russross/blackfriday"
     "github.com/flosch/pongo2"
 )
@@ -40,10 +41,19 @@ func main() {
         filecontent, err := ioutil.ReadFile("./blog/" + filename.Name())
         check(err)
 
-        tpl, err := pongo2.FromString("{% extends \"base.html\" %}{% block content %}"+string(blackfriday.MarkdownCommon(filecontent))+"{% endblock %}")
+        // Read the metadata
+        r, _ := regexp.Compile("(?m)^Title: (.*)$")
+        title := r.FindStringSubmatch(string(filecontent))[1]
+        filecontent = []byte(r.ReplaceAllString(string(filecontent), ""))
+
+        r, _ = regexp.Compile("(?m)^Published: (.*)$")
+        published := r.FindStringSubmatch(string(filecontent))[1]
+        filecontent = []byte(r.ReplaceAllString(string(filecontent), ""))
+
+        tpl, err := pongo2.FromString("{% extends \"base.html\" %}{% block title %}{{ title }}{% endblock %}{% block content %}"+string(blackfriday.MarkdownCommon(filecontent))+"{% endblock %}")
         check(err)
 
-        f, err := tpl.Execute(pongo2.Context{})
+        f, err := tpl.Execute(pongo2.Context{"title": title, "published": published})
         check(err)
 
         finalfilename := strings.TrimSuffix(filename.Name(), filepath.Ext(filename.Name()))
