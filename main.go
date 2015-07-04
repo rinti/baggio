@@ -18,7 +18,7 @@ func main() {
     files, _ := ioutil.ReadDir("./blog/")
 
     for _, filename := range files {
-      // Ignore drafts
+        // Ignore drafts
         if strings.HasPrefix(filename.Name(), "draft") {
             continue
         }
