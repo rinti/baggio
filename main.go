@@ -14,17 +14,19 @@ func check(e error) {
 }
 
 func main() {
-  file, err := ioutil.ReadFile("test.md")
-  check(err)
+  files, _ := ioutil.ReadDir("./blog/")
 
-  tpl, err := pongo2.FromString("{% extends \"base.html\" %}{% block content %}"+string(blackfriday.MarkdownCommon(file))+"{% endblock %}")
-  check(err)
+  for _, filename := range files {
+    filecontent, err := ioutil.ReadFile("./blog/" + filename.Name())
+    check(err)
 
-  f, err := tpl.Execute(pongo2.Context{})
-  check(err)
+    tpl, err := pongo2.FromString("{% extends \"base.html\" %}{% block content %}"+string(blackfriday.MarkdownCommon(filecontent))+"{% endblock %}")
+    check(err)
 
-  // file, err := tpl.Execute(pongo2.Context{})
-  // check(err)
+    f, err := tpl.Execute(pongo2.Context{})
+    check(err)
 
-  ioutil.WriteFile("index.html", []byte(f), 0644)
+    ioutil.WriteFile(filename.Name(), []byte(f), 0644)
+  }
+
 }
