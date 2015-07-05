@@ -1,7 +1,6 @@
 package main
 
 import (
-    "fmt"
     "strings"
     "path/filepath"
     "io/ioutil"
@@ -33,7 +32,7 @@ func main() {
       os.Mkdir("./public_html/blog/", 0755)
     }
 
-    archive := make([]map[string]string, 1)
+    archive := make([]map[string]string, 0)
 
     for _, filename := range files {
         // Ignore drafts
@@ -63,14 +62,17 @@ func main() {
         ioutil.WriteFile("./public_html/blog/" + finalfilename + ".html", []byte(f), 0644)
 
         m := make(map[string]string)
-        m["url"] = "/blog/" + finalfilename + ".html"
+        m["url"] = "./blog/" + finalfilename + ".html"
         m["title"] = title
 
         archive = append(archive, m)
     }
-    for _, link := range archive {
-        // This should eventually make an archive on the index.html
-        fmt.Print(link["url"])
-        fmt.Print(link["title"])
-    }
+
+    tpl, err := pongo2.FromFile("index.html")
+    check(err)
+
+    f, err := tpl.Execute(pongo2.Context{"items": archive})
+    check(err)
+
+    ioutil.WriteFile("./public_html/index.html", []byte(f), 0644)
 }
