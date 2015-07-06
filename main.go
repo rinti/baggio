@@ -52,10 +52,10 @@ func main() {
         published := r.FindStringSubmatch(string(filecontent))[1]
         filecontent = []byte(r.ReplaceAllString(string(filecontent), ""))
 
-        tpl, err := pongo2.FromString("{% extends \"base.html\" %}{% block title %}{{ title }}{% endblock %}{% block content %}"+string(blackfriday.MarkdownCommon(filecontent))+"{% endblock %}")
+        tpl, err := pongo2.FromFile("detail.html")
         check(err)
 
-        f, err := tpl.Execute(pongo2.Context{"title": title, "published": published})
+        f, err := tpl.Execute(pongo2.Context{"title": title, "published": published, "content": string(blackfriday.MarkdownCommon(filecontent))})
         check(err)
 
         finalfilename := strings.TrimSuffix(filename.Name(), filepath.Ext(filename.Name()))
