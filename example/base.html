@@ -3,8 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <title>{% block title %}{% endblock %}</title>
+  <link rel="stylesheet" href="./assets/styles.css">
 </head>
 <body>
+  <div class="content header">
+    <a href="./">{% block content_header %}My blagoblag{% endblock %}</a>
+  </div>
+  <div class="content">
   {% block content %}{% endblock %} 
+  </div>
 </body>
 </html>

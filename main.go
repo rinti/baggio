@@ -24,16 +24,18 @@ func exists(path string) (bool, error) {
 }
 
 func main() {
-    files, _ := ioutil.ReadDir("./blog/")
     public_html, err := exists("./public_html/")
     check(err)
     if !public_html {
       os.Mkdir("./public_html/", 0755)
       os.Mkdir("./public_html/blog/", 0755)
+      os.Mkdir("./public_html/assets/", 0755)
+      ioutil.WriteFile("./public_html/assets/styles.css", []byte(""), 0644)
     }
 
     archive := make([]map[string]string, 0)
 
+    files, _ := ioutil.ReadDir("./blog/")
     for _, filename := range files {
         // Ignore drafts
         if strings.HasPrefix(filename.Name(), "draft") {
